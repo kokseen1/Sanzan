@@ -1,0 +1,8 @@
+
+*.mp4
+tmp/
+out/
+*.webm
+*.exe
+*.jpg
+*.pyc

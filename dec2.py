@@ -4,18 +4,16 @@ from etc import *
 import pafy
 
 WRITEOUT = True
-WRITEOUT = False
-PREVIEW = True
+PREVIEW = False
 
 # options = {"STREAM_RESOLUTION": "720p"}
 URL = ""
-
 NAME = ""
 
 if __name__ == "__main__":
     if URL:
         try:
-            cap = CamGear(source=URL, stream_mode=False, logging=True).start() # YouTube Video URL as input
+            cap = CamGear(source=URL, stream_mode=False, logging=True).start()
         except RuntimeError:
             video = pafy.new(URL)
             cap = cv2.VideoCapture(video.getbestvideo().url)
@@ -51,9 +49,7 @@ if __name__ == "__main__":
 
         unshuf_order = np.zeros_like(shuf_order)
         unshuf_order[shuf_order] = np.arange(height)
-        frame_arr = frame_arr[unshuf_order]  # Unshuffle the shuffled data
-
-        curr_frame += 1
+        frame_arr = frame_arr[unshuf_order]
 
         if WRITEOUT:
             out.write(frame_arr)
@@ -61,3 +57,6 @@ if __name__ == "__main__":
             cv2.imshow("", frame_arr)
             cv2.waitKey(1)
             # cv2.waitKey(int(1000 / fps) - 1)
+
+        curr_frame += 1
+        # print(f"Progress: frame {curr_frame}/{frames}")

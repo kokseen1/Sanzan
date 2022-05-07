@@ -31,9 +31,7 @@ if __name__ == "__main__":
             break
 
         frame_arr = np.array(frame, dtype=np.uint8)
-
         frame_arr = frame_arr[shuf_order]
-
 
         if WRITEOUT:
             out.write(frame_arr)

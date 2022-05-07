@@ -10,6 +10,8 @@ PREVIEW = True
 # options = {"STREAM_RESOLUTION": "720p"}
 URL = ""
 
+NAME = "kon"
+
 if __name__ == "__main__":
     if URL:
         try:
@@ -18,20 +20,20 @@ if __name__ == "__main__":
             video = pafy.new(URL)
             cap = cv2.VideoCapture(video.getbestvideo().url)
     else:
-        cap = cv2.VideoCapture(FILENAME_ENC)
+        cap = cv2.VideoCapture(FILENAME_ENC.format(NAME))
 
     is_stream, width, height, fps = get_properties(cap)
 
     if WRITEOUT:
         out = cv2.VideoWriter(
-            FILENAME_DEC,
+            FILENAME_DEC.format(NAME),
             cv2.VideoWriter_fourcc(*"mp4v"),
             fps,
             (int(width), int(height)),
             isColor=True,
         )
 
-    shuf_order = np.fromfile(FILENAME_SHUF_ORDER, dtype="int")
+    shuf_order = np.fromfile(FILENAME_SHUF_ORDER.format(NAME), dtype="int")
 
     curr_frame = 0
 

@@ -1,15 +1,14 @@
 import numpy as np
-from random import randint
 from etc import *
 
 WRITEOUT = True
-PREVIEW = True
+PREVIEW = False
 
 NAME = ""
 
 if __name__ == "__main__":
     cap = cv2.VideoCapture(FILENAME_RAW.format(NAME))
-    width, height, fps = get_properties(cap)
+    _, width, height, fps, frames = get_properties(cap)
 
     if WRITEOUT:
         out = cv2.VideoWriter(
@@ -35,7 +34,6 @@ if __name__ == "__main__":
 
         frame_arr = frame_arr[shuf_order]
 
-        curr_frame += 1
 
         if WRITEOUT:
             out.write(frame_arr)
@@ -43,3 +41,6 @@ if __name__ == "__main__":
             cv2.imshow("", frame_arr)
             cv2.waitKey(10)
             # cv2.waitKey(int(1000 / fps) - 1)
+
+        curr_frame += 1
+        # print(f"Progress: frame {curr_frame}/{frames}")

@@ -1,16 +1,16 @@
 import numpy as np
-from random import randint
 from vidgear.gears import CamGear
 from etc import *
 import pafy
 
 WRITEOUT = True
+WRITEOUT = False
 PREVIEW = True
 
 # options = {"STREAM_RESOLUTION": "720p"}
 URL = ""
 
-NAME = "kon"
+NAME = ""
 
 if __name__ == "__main__":
     if URL:
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     else:
         cap = cv2.VideoCapture(FILENAME_ENC.format(NAME))
 
-    is_stream, width, height, fps = get_properties(cap)
+    is_stream, width, height, fps, frames = get_properties(cap)
 
     if WRITEOUT:
         out = cv2.VideoWriter(
@@ -59,5 +59,5 @@ if __name__ == "__main__":
             out.write(frame_arr)
         if PREVIEW:
             cv2.imshow("", frame_arr)
-            cv2.waitKey(10)
+            cv2.waitKey(1)
             # cv2.waitKey(int(1000 / fps) - 1)

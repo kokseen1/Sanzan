@@ -1,9 +1,9 @@
 import cv2
 
 FILENAME_RAW = "raw/{}.mp4"
-FILENAME_ENC = "enc/{}_enc.mp4"
-FILENAME_DEC = "dec/{}_dec.mp4"
-FILENAME_SHUF_ORDER = "shuf/{}_shuf_order"
+FILENAME_ENC = "enc/{}.mp4"
+FILENAME_DEC = "dec/{}.mp4"
+FILENAME_SHUF_ORDER = "shuf/{}"
 
 
 def get_properties(cap):

@@ -1,10 +1,9 @@
 import numpy as np
-from vidgear.gears import CamGear
 from etc import *
 import pafy
 
 WRITEOUT = True
-PREVIEW = False
+PREVIEW = True
 
 # options = {"STREAM_RESOLUTION": "720p"}
 URL = ""
@@ -13,6 +12,7 @@ NAME = ""
 if __name__ == "__main__":
     if URL:
         try:
+            from vidgear.gears import CamGear
             cap = CamGear(source=URL, stream_mode=False, logging=True).start()
         except RuntimeError:
             video = pafy.new(URL)

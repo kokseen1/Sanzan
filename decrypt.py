@@ -1,23 +1,31 @@
 import numpy as np
 from etc import *
+import youtube_dl
 import pafy
 
 WRITEOUT = True
 PREVIEW = True
 
-# options = {"STREAM_RESOLUTION": "720p"}
 URL = ""
 NAME = ""
 
 if __name__ == "__main__":
+    cap = None
     if URL:
         try:
             from vidgear.gears import CamGear
-            cap = CamGear(source=URL, stream_mode=False, logging=True).start()
+
+            # options = {"STREAM_RESOLUTION": "720p"}
+            cap = CamGear(source=URL, stream_mode=True, logging=True).start()
         except RuntimeError:
-            video = pafy.new(URL)
-            cap = cv2.VideoCapture(video.getbestvideo().url)
-    else:
+            # video = pafy.new(URL)
+            # cap = cv2.VideoCapture(video.getbestvideo().url)
+
+            OPTIONS["outtmpl"] = FILENAME_ENC.format(NAME)
+            with youtube_dl.YoutubeDL(OPTIONS) as ydl:
+                ydl.download([URL])
+
+    if not cap:
         cap = cv2.VideoCapture(FILENAME_ENC.format(NAME))
 
     is_stream, width, height, fps, frames = get_properties(cap)

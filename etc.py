@@ -5,6 +5,11 @@ FILENAME_ENC = "enc/{}.mp4"
 FILENAME_DEC = "dec/{}.mp4"
 FILENAME_SHUF_ORDER = "shuf/{}"
 
+OPTIONS = {
+    "format": "bestvideo",
+    "extractaudio": False,
+}
+
 
 def get_properties(cap):
     is_stream = False

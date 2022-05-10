@@ -1,21 +1,31 @@
 # Bangumi
  
-## `enc.py`
+## encrypt.py
 
-Main functionality for encrypting and decrypting videos.
+For encrypting videos.
 
-Chunk height `CHUNKSIZE` is determined automatically. Video height must be a multiple of `CHUNKS`.
+- The keyfile is stored in the `shuf/` directory.
 
-## `stream.py`
+## decrypt.py
 
-For streaming straight from online source using `pafy`. Streaming high resolution videos is very slow and choppy. Download the whole file and use `enc.py` to decrypt and display in realtime for better performance.
+For decrypting videos.
 
-## `funcs.py`
+- The source video is streamed if `URL` is defined. Otherwise, the file defined by `NAME` from the `enc/` directory is used.
 
-Contains functions used by `numpy.vectorize` for mapping a function across a whole `numpy` array. Currently unused.
+## etc.py
 
-## Note
+Contains parameters and functions used by `encrypt.py` and `decrypt.py`.
 
-- The proper argument to `cv2.waitKey` is uncertain. Needs more testing.
+## Usage Notes
+
+- The `WRITEOUT` flag determines if the generated file is written to disk into the respective `enc/` and `dec/` directories.
+
+- The `PREVIEW` flag determines if the video is shown in real time as it is being generated.
+
+## Additional Notes
+
+- `cv2.waitKey` is not able to maintain a consistent playback framerate for `cv2.imshow`.
+
+- `vidgear` is used for streaming, but will fall back to `YDL` if streaming is unavailable.
 
 - Audio is not yet supported.

@@ -41,4 +41,5 @@ if __name__ == "__main__":
             # cv2.waitKey(int(1000 / fps) - 1)
 
         curr_frame += 1
-        # print(f"Progress: frame {curr_frame}/{frames}")
+        if int(curr_frame % fps) == 0:
+            print(f"Progress: frame {curr_frame}/{frames}")

@@ -1,26 +1,25 @@
 import numpy as np
 from etc import *
 import youtube_dl
-import pafy
 
 WRITEOUT = True
 PREVIEW = True
+USE_YDL = False
 
 URL = ""
 NAME = ""
 
 if __name__ == "__main__":
     cap = None
-    if URL:
+    if "URL" in globals() and URL:
         try:
+            if USE_YDL:
+                raise RuntimeError
             from vidgear.gears import CamGear
 
             # options = {"STREAM_RESOLUTION": "720p"}
             cap = CamGear(source=URL, stream_mode=True, logging=True).start()
         except RuntimeError:
-            # video = pafy.new(URL)
-            # cap = cv2.VideoCapture(video.getbestvideo().url)
-
             OPTIONS["outtmpl"] = FILENAME_ENC.format(NAME)
             with youtube_dl.YoutubeDL(OPTIONS) as ydl:
                 ydl.download([URL])
@@ -67,4 +66,5 @@ if __name__ == "__main__":
             # cv2.waitKey(int(1000 / fps) - 1)
 
         curr_frame += 1
-        # print(f"Progress: frame {curr_frame}/{frames}")
+        if int(curr_frame % fps) == 0:
+            print(f"Progress: frame {curr_frame}/{frames}")

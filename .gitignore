@@ -7,3 +7,5 @@ out/
 *.jpg
 *.pyc
 *.aac
+legacy/
+shuf/

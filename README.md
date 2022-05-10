@@ -1,4 +1,16 @@
 # Bangumi
+
+Quick and simple video obfuscation
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/kokseen1/Bangumi/main/img/obfuscated.png" alt="Obfuscated Video"/>
+ <p align="center">Obfuscated Video<p align="center">
+</p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/kokseen1/Bangumi/main/img/deobfuscated.png" alt="Deobfuscated Video"/>
+ <p align="center">Deobfuscated Video<p align="center">
+</p>
  
 ## encrypt.py
 

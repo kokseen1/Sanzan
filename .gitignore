@@ -9,3 +9,6 @@ out/
 *.aac
 legacy/
 shuf/
+build/
+dist/
+sanzan.egg-info/

@@ -3,11 +3,6 @@ from tqdm import tqdm
 import numpy as np
 from datetime import timedelta
 
-FILENAME_RAW = "raw/{}.mp4"
-FILENAME_ENC = "enc/{}.mp4"
-FILENAME_DEC = "dec/{}.mp4"
-FILENAME_SHUF_ORDER = "shuf/{}"
-
 OPTIONS = {
     "format": "bestvideo",
     "extractaudio": False,

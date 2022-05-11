@@ -6,12 +6,12 @@ Quick and simple video obfuscation
 
 <p align="center">
  <p align="center">Obfuscated Video<p align="center">
-  <img src="https://raw.githubusercontent.com/kokseen1/Bangumi/main/img/obfuscated.png" width="50%" alt="Obfuscated Video"/>
+  <img src="https://raw.githubusercontent.com/kokseen1/Bangumi/main/img/obfuscated.png?raw=True" width="70%" alt="Obfuscated Video"/>
 </p>
 
 <p align="center">
  <p align="center">Deobfuscated Video<p align="center">
-  <img src="https://raw.githubusercontent.com/kokseen1/Bangumi/main/img/deobfuscated.png" width="50%" alt="Deobfuscated Video"/>
+  <img src="https://raw.githubusercontent.com/kokseen1/Bangumi/main/img/deobfuscated.png?raw=True" width="70%" alt="Deobfuscated Video"/>
 </p>
  
 ## encrypt.py

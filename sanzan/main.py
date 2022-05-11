@@ -48,11 +48,9 @@ class Encryptor(_Cryptor):
 
     def run(self, preview=False, silent=False) -> None:
         if type(self.shuf_order) is not np.ndarray:
-            raise SZException(
-                "No key found. Use `gen_key` to generate a key first.")
+            raise SZException("No key found. Use `gen_key` to generate a key first.")
 
-        print(
-            f"Encrypting with keyfile {os.path.basename(self.kpath)}")
+        print(f"Encrypting with keyfile {os.path.basename(self.kpath)}")
 
         for i in tqdm(range(int(self.props["frames"])), disable=silent):
             success, frame = self.cap.read()
@@ -85,8 +83,7 @@ class Decryptor(_Cryptor):
 
         self.shuf_order = np.fromfile(self.kpath, dtype="int")
         self.unshuf_order = np.zeros_like(self.shuf_order)
-        self.unshuf_order[self.shuf_order] = np.arange(
-            int(self.props["height"]))
+        self.unshuf_order[self.shuf_order] = np.arange(int(self.props["height"]))
 
         return self
 
@@ -97,8 +94,7 @@ class Decryptor(_Cryptor):
             # self.set_key(try_kpath)
             raise SZException("No key found. Use `set_key` to set a key first.")
 
-        print(
-            f"Decrypting with keyfile {os.path.basename(self.kpath)}")
+        print(f"Decrypting with keyfile {os.path.basename(self.kpath)}")
 
         for i in tqdm(range(int(self.props["frames"])), disable=silent):
             success, frame = self.cap.read()

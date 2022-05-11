@@ -37,8 +37,7 @@ def get_properties(cap):
     print(f"Height: {props['height']}")
     print(f"FPS: {props['fps']}")
     print(f"Total Frames: {props['frames']}")
-    print(
-        f"Length: {timedelta(seconds=props['frames']/props['fps'])}")
+    print(f"Length: {timedelta(seconds=props['frames']/props['fps'])}")
     print()
 
     return props

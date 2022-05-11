@@ -92,10 +92,10 @@ class Decryptor(_Cryptor):
 
     def run(self, preview=False, silent=False) -> None:
         if type(self.unshuf_order) is not np.ndarray:
-            try_kpath = f"{self.ipath}.key"
-            self.set_key(try_kpath)
-            print(f"`set_key` was not used. Trying default path {try_kpath}.")
-            # raise SZException("No key found. Use `set_key` to set a key first.")
+            # try_kpath = f"{self.ipath}.key"
+            # print(f"`set_key` was not used. Trying default path {try_kpath}.")
+            # self.set_key(try_kpath)
+            raise SZException("No key found. Use `set_key` to set a key first.")
 
         print(
             f"Decrypting with keyfile {os.path.basename(self.kpath)}")

@@ -21,6 +21,11 @@ class _Cryptor:
         self.props = get_properties(self.cap)
 
     def set_output(self, path=None):
+        try:
+            with open(path, 'w+') as _:
+                pass
+        except OSError:
+            raise OSError("Invalid output path specified")
         self.out = cv2.VideoWriter(
             path,
             cv2.VideoWriter_fourcc(*"mp4v"),

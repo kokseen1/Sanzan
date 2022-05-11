@@ -22,7 +22,7 @@ class _Cryptor:
 
     def set_output(self, path=None):
         try:
-            with open(path, 'w+') as _:
+            with open(path, "w+") as _:
                 pass
         except OSError:
             raise OSError("Invalid output path specified")

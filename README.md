@@ -1,45 +1,55 @@
-# Bangumi
+# Sanzan
 
 Quick and simple video obfuscation
 
 ## Demo
 
 <p align="center">
- <p align="center">Obfuscated Video<p align="center">
-  <img src="https://raw.githubusercontent.com/kokseen1/Bangumi/main/img/obfuscated.png?raw=True" width="70%" alt="Obfuscated Video"/>
+ <p align="center">Obfuscated Video:<p align="center">
+  <img src="https://raw.githubusercontent.com/kokseen1/Sanzan/main/img/obfuscated.png?raw=True" width="70%" alt="Obfuscated Video"/>
 </p>
 
 <p align="center">
- <p align="center">Deobfuscated Video<p align="center">
-  <img src="https://raw.githubusercontent.com/kokseen1/Bangumi/main/img/deobfuscated.png?raw=True" width="70%" alt="Deobfuscated Video"/>
+ <p align="center">Deobfuscated Video:<p align="center">
+  <img src="https://raw.githubusercontent.com/kokseen1/Sanzan/main/img/deobfuscated.png?raw=True" width="70%" alt="Deobfuscated Video"/>
 </p>
  
-## encrypt.py
+## Usage
 
-For encrypting videos.
+### Encryption
 
-- The keyfile is stored in the `shuf/` directory.
+```shell
+sz -e original.mp4 -o encrypted.mp4
+```
 
-## decrypt.py
 
-For decrypting videos.
+### Decryption
 
-- The source video is streamed if `URL` is defined. Otherwise, the file defined by `NAME` from the `enc/` directory is used.
+```shell
+sz -d encrypted.mp4 -o decrypted.mp4 -k <keyfile>
+```
 
-## etc.py
+## More Usage
 
-Contains parameters and functions used by `encrypt.py` and `decrypt.py`.
+When encrypting, use the optional `-k` flag to specify the path of the generated keyfile.
 
-## Usage Notes
+```shell
+sz -e original.mp4 -o encrypted.mp4 -k <generated keyfile>
+```
 
-- The `WRITEOUT` flag determines if the generated file is written to disk into the respective `enc/` and `dec/` directories.
+Use the optional `-p` flag to view a real time preview of the output. This flag can be used alone or along with the `-o` argument.
 
-- The `PREVIEW` flag determines if the video is shown in real time as it is being generated.
+```shell
+sz -d encrypted.mp4 -o decrypted.mp4 -k <keyfile> -p
+```
 
-## Additional Notes
+Use the optional `-s` flag to hide the progress bar. Might improve performance.
 
-- `cv2.waitKey` is not able to maintain a consistent playback framerate for `cv2.imshow`.
 
-- `vidgear` is used for streaming, but will fall back to `YDL` if streaming is unavailable.
+## Note
+
+- `cv2.waitKey` is unable to maintain a consistent playback framerate for `cv2.imshow`.
+
+<!-- - `vidgear` is used for streaming, but will fall back to `YDL` if streaming is unavailable. -->
 
 - Audio is not yet supported.

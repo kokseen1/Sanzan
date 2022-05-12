@@ -1,6 +1,7 @@
 # Sanzan
 
 ![PyPi](https://github.com/kokseen1/Sanzan/actions/workflows/release.yml/badge.svg)
+![PyPI](https://img.shields.io/pypi/v/sanzan)
 
 Quick and simple video obfuscation
 

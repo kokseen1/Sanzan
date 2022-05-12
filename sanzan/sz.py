@@ -18,7 +18,7 @@ def main():
     args = parser.parse_args()
 
     if not (args.out or args.p):
-        parser.error("No action specified, add -o or -p")
+        parser.error("no action specified, add -o or -p")
 
     if args.enc:
         x = Encryptor(args.enc)
@@ -26,7 +26,7 @@ def main():
 
     if args.dec:
         if not args.key:
-            parser.error("Path of keyfile not specified with -k")
+            parser.error("path of keyfile not specified with -k")
 
         x = Decryptor(args.dec)
         x.set_key(args.key)

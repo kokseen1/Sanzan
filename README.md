@@ -6,7 +6,13 @@ Quick and simple video obfuscation
 
 ## Demo
 
-<p align="center">
+Encrypted Video:
+[Encrypted](https://raw.githubusercontent.com/kokseen1/Sanzan/main/img/enc.gif?raw=True)
+
+Decrypted Video:
+[Decrypted](https://raw.githubusercontent.com/kokseen1/Sanzan/main/img/dec.gif?raw=True)
+
+<!-- <p align="center">
  <p align="center">Obfuscated Video:<p align="center">
   <img src="https://raw.githubusercontent.com/kokseen1/Sanzan/main/img/obfuscated.png?raw=True" width="70%" alt="Obfuscated Video"/>
 </p>
@@ -14,7 +20,7 @@ Quick and simple video obfuscation
 <p align="center">
  <p align="center">Deobfuscated Video:<p align="center">
   <img src="https://raw.githubusercontent.com/kokseen1/Sanzan/main/img/deobfuscated.png?raw=True" width="70%" alt="Deobfuscated Video"/>
-</p>
+</p> -->
  
 ## Installation
 

@@ -16,6 +16,12 @@ Quick and simple video obfuscation
   <img src="https://raw.githubusercontent.com/kokseen1/Sanzan/main/img/deobfuscated.png?raw=True" width="70%" alt="Deobfuscated Video"/>
 </p>
  
+## Installation
+
+```shell
+pip install sanzan
+```
+
 ## Usage
 
 ### Encryption

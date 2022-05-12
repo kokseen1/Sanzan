@@ -11,6 +11,7 @@ def main():
 
     parser.add_argument("-k", "--key", help="path of keyfile", type=str)
     parser.add_argument("-o", "--output", help="path of output file", type=str)
+    parser.add_argument("-pw", "--password", help="password to encrypt or decrypt", type=str)
 
     parser.add_argument("-p", "--preview", action="store_true", help="show real time preview of output")
     parser.add_argument("-s", "--silent", action="store_true", help="hide progress bar")
@@ -22,14 +23,14 @@ def main():
 
     if args.encrypt:
         x = Encryptor(args.encrypt)
-        x.gen_key(args.key)
+        x.gen_key(args.key, args.password)
 
     if args.decrypt:
-        if not args.key:
-            parser.error("path of keyfile not specified with -k")
+        if not (args.key or args.password):
+            parser.error("keyfile or password not specified, add -k or -pw")
 
         x = Decryptor(args.decrypt)
-        x.set_key(args.key)
+        x.set_key(args.key, args.password)
 
     if args.output:
         x.set_output(args.output)

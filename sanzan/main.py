@@ -34,13 +34,25 @@ class _Cryptor:
 
         return self
 
+    def _gen_key(self, height, password=None):
+        shuf_order = np.arange(int(height))
+        if password:
+            np.random.seed(bytearray(password, encoding="utf8"))
+            print(f"Generating key with password")
+        np.random.shuffle(shuf_order)
+        if password:
+            np.random.seed()
+
+        return shuf_order
+
 
 class Encryptor(_Cryptor):
-    def gen_key(self, path=None):
+    def gen_key(self, path=None, password=None):
         if type(self.shuf_order) is np.ndarray:
             raise SZException("`gen_key` was called twice!")
-        self.shuf_order = np.arange(int(self.props["height"]))
-        np.random.shuffle(self.shuf_order)
+
+        self.shuf_order = super()._gen_key(height=self.props["height"], password=password)
+
         if not path:
             path = f"{self.ipath}.key"
         self.shuf_order.tofile(path)
@@ -77,13 +89,23 @@ class Decryptor(_Cryptor):
         self.unshuf_order = None
         super().__init__(ipath)
 
-    def set_key(self, path):
+    def set_key(self, path=None, password=None):
         if type(self.unshuf_order) is np.ndarray:
             raise SZException("`set_key` was called twice!")
 
+        if path and password:
+            raise SZException("Both keypath and password were specified!")
+
         self.kpath = path
 
-        self.shuf_order = np.fromfile(self.kpath, dtype="int")
+        if self.kpath:
+            self.shuf_order = np.fromfile(self.kpath, dtype="int")
+            print(f"Decrypting with keyfile {os.path.basename(self.kpath)}")
+        elif password:
+            self.shuf_order = super()._gen_key(height=self.props["height"], password=password)
+        else:
+            raise SZException("No keypath or password specifed.")
+
         self.unshuf_order = np.zeros_like(self.shuf_order)
         self.unshuf_order[self.shuf_order] = np.arange(int(self.props["height"]))
 
@@ -95,8 +117,6 @@ class Decryptor(_Cryptor):
             # print(f"`set_key` was not used. Trying default path {try_kpath}.")
             # self.set_key(try_kpath)
             raise SZException("No key found. Use `set_key` to set a key first.")
-
-        print(f"Decrypting with keyfile {os.path.basename(self.kpath)}")
 
         for i in tqdm(range(int(self.props["frames"])), disable=silent):
             success, frame = self.cap.read()

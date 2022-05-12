@@ -6,35 +6,35 @@ def main():
     parser = argparse.ArgumentParser(description="Encrypt or decrypt video files")
 
     ifile_group = parser.add_mutually_exclusive_group(required=True)
-    ifile_group.add_argument("-e", "--enc", help="path of file to encrypt", type=str)
-    ifile_group.add_argument("-d", "--dec", help="path of file to decrypt", type=str)
+    ifile_group.add_argument("-e", "--encrypt", help="path of file to encrypt", type=str)
+    ifile_group.add_argument("-d", "--decrypt", help="path of file to decrypt", type=str)
 
     parser.add_argument("-k", "--key", help="path of keyfile", type=str)
-    parser.add_argument("-o", "--out", help="path of output file", type=str)
+    parser.add_argument("-o", "--output", help="path of output file", type=str)
 
-    parser.add_argument("-p", action="store_true")
-    parser.add_argument("-s", action="store_true")
+    parser.add_argument("-p", "--preview", action="store_true", help="show real time preview of output")
+    parser.add_argument("-s", "--silent", action="store_true", help="hide progress bar")
 
     args = parser.parse_args()
 
-    if not (args.out or args.p):
+    if not (args.output or args.preview):
         parser.error("no action specified, add -o or -p")
 
-    if args.enc:
-        x = Encryptor(args.enc)
+    if args.encrypt:
+        x = Encryptor(args.encrypt)
         x.gen_key(args.key)
 
-    if args.dec:
+    if args.decrypt:
         if not args.key:
             parser.error("path of keyfile not specified with -k")
 
-        x = Decryptor(args.dec)
+        x = Decryptor(args.decrypt)
         x.set_key(args.key)
 
-    if args.out:
-        x.set_output(args.out)
+    if args.output:
+        x.set_output(args.output)
 
-    x.run(preview=args.p, silent=args.s)
+    x.run(preview=args.preview, silent=args.silent)
 
 
 if __name__ == "__main__":

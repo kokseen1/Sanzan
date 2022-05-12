@@ -13,3 +13,4 @@ build/
 dist/
 sanzan.egg-info/
 test.py
+*.key

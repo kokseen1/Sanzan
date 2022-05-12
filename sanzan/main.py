@@ -82,6 +82,8 @@ class Encryptor(_Cryptor):
                 cv2.waitKey(1)
 
         self.cap.release()
+        if self.out:
+            self.out.release()
 
 
 class Decryptor(_Cryptor):
@@ -134,3 +136,5 @@ class Decryptor(_Cryptor):
                 cv2.waitKey(1)
 
         self.cap.release()
+        if self.out:
+            self.out.release()

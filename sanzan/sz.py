@@ -2,7 +2,7 @@ from sanzan import *
 import argparse
 
 
-def main():
+def main(args=None):
     parser = argparse.ArgumentParser(description="Encrypt or decrypt video files")
 
     ifile_group = parser.add_mutually_exclusive_group(required=True)
@@ -16,7 +16,7 @@ def main():
     parser.add_argument("-p", "--preview", action="store_true", help="show real time preview of output")
     parser.add_argument("-s", "--silent", action="store_true", help="hide progress bar")
 
-    args = parser.parse_args()
+    args = parser.parse_args(args)
 
     if not (args.output or args.preview):
         parser.error("no action specified, add -o or -p")

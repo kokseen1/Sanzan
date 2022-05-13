@@ -4,6 +4,7 @@ import sanzan as sz
 import hashlib
 import pytest
 from sanzan.etc import SZException
+import sys
 
 TESTS_DIR = "tests"
 
@@ -52,6 +53,7 @@ def test_dec_keyfile(tmp_path):
     d = sz.Decryptor(video_path)
     with open(key_path, "rb") as f:
         raw = f.read()
+    print(sys.byteorder)
     print("key_path",hashlib.sha1(raw).hexdigest())
     d.set_key(path=key_path)
     d.set_output(VIDEO_DEC_FILENAME)

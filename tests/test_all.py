@@ -47,9 +47,10 @@ def test_enc_dec_pw(tmp_path):
 
 def test_dec_keyfile(tmp_path):
     video_path = shutil.copy(Path(TESTS_DIR) / VIDEO_ENC_FILENAME, tmp_path)
+    key_path = shutil.copy(Path(TESTS_DIR) / VIDEO_KEYPATH, tmp_path)
 
     d = sz.Decryptor(video_path)
-    d.set_key(path=Path(TESTS_DIR) / VIDEO_KEYPATH)
+    d.set_key(path=key_path)
     d.set_output(VIDEO_DEC_FILENAME)
     d.run()
 

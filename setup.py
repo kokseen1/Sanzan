@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="Sanzan",
-    version="0.0.9",
+    version="0.0.10",
     packages=["sanzan"],
     description="Quick and simple video obfuscation",
     long_description=long_description,
@@ -14,7 +14,7 @@ setup(
     install_requires=[
         "youtube-dl==2020.12.2",
         "opencv-python",
-        "numpy==1.21.5",
+        "numpy",
         "vidgear[core]",
     ],
     entry_points={

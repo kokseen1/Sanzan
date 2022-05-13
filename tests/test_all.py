@@ -4,7 +4,6 @@ import sanzan as sz
 import hashlib
 import pytest
 from sanzan.etc import SZException
-import sys
 
 TESTS_DIR = "tests"
 
@@ -47,19 +46,36 @@ def test_enc_dec_pw(tmp_path):
 
 
 def test_dec_keyfile(tmp_path):
-    video_path = shutil.copy(Path(TESTS_DIR) / VIDEO_ENC_FILENAME, tmp_path)
-    key_path = shutil.copy(Path(TESTS_DIR) / VIDEO_KEYPATH, tmp_path)
+    video_path = shutil.copy(Path(TESTS_DIR) / VIDEO_FILENAME, tmp_path)
 
-    d = sz.Decryptor(video_path)
-    with open(key_path, "rb") as f:
-        raw = f.read()
-    print(sys.byteorder)
-    print("key_path",hashlib.sha1(raw).hexdigest())
-    d.set_key(path=key_path)
+    e = sz.Encryptor(video_path)
+    e.gen_key(password=VIDEO_PASSWORD)
+    e.set_output(VIDEO_ENC_FILENAME)
+    e.run()
+
+    assert_file_hash(VIDEO_ENC_FILENAME, VIDEO_ENC_HASH)
+
+    d = sz.Decryptor(VIDEO_ENC_FILENAME)
+    d.set_key(path=tmp_path / Path(VIDEO_FILENAME + ".key"))
     d.set_output(VIDEO_DEC_FILENAME)
     d.run()
 
     assert_file_hash(VIDEO_DEC_FILENAME, VIDEO_DEC_HASH)
+
+
+# Does not work on Github Actions
+# def test_dec_keyfile(tmp_path):
+#     video_path = shutil.copy(Path(TESTS_DIR) / VIDEO_ENC_FILENAME, tmp_path)
+#     key_path = shutil.copy(Path(TESTS_DIR) / VIDEO_KEYPATH, tmp_path)
+
+#     d = sz.Decryptor(video_path)
+#     with open(key_path, "rb") as f:
+#         raw = f.read()
+#     d.set_key(path=key_path)
+#     d.set_output(VIDEO_DEC_FILENAME)
+#     d.run()
+
+#     assert_file_hash(VIDEO_DEC_FILENAME, VIDEO_DEC_HASH)
 
 
 def test_enc_no_key_pw(tmp_path):

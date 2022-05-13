@@ -8,7 +8,7 @@ from sanzan.etc import SZException
 TESTS_DIR = "tests"
 
 VIDEO_FILENAME = "video.mp4"
-VIDEO_KEYPATH = "keyfile"
+VIDEO_KEYPATH = "keyfile.key"
 
 VIDEO_ENC_FILENAME = "enc.mp4"
 VIDEO_DEC_FILENAME = "dec.mp4"

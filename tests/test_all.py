@@ -50,6 +50,9 @@ def test_dec_keyfile(tmp_path):
     key_path = shutil.copy(Path(TESTS_DIR) / VIDEO_KEYPATH, tmp_path)
 
     d = sz.Decryptor(video_path)
+    with open(key_path, "rb") as f:
+        raw = f.read()
+    print("key_path",hashlib.sha1(raw).hexdigest())
     d.set_key(path=key_path)
     d.set_output(VIDEO_DEC_FILENAME)
     d.run()

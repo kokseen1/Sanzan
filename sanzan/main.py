@@ -19,6 +19,8 @@ class _Cryptor:
             if not os.path.isfile(self.ipath):
                 raise FileNotFoundError(f"No such input file: '{self.ipath}'")
             self.cap = cv2.VideoCapture(self.ipath)
+            if not self.cap.isOpened():
+                raise OSError("Invalid input path or file format specified")
             print(f"Opened file: {os.path.basename(self.ipath)}")
 
         self.props = get_properties(self.cap)

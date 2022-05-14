@@ -14,25 +14,25 @@ class SZException(Exception):
 
 
 def get_properties(cap):
-    props = dict()
-    props["is_stream"] = False
-    try:
-        cap = cap.stream
+    props = {"is_stream": False}
+
+    if hasattr(cap, "stream"):
         props["is_stream"] = True
-    except AttributeError:
-        pass
+        cap = cap.stream
 
     props["width"] = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
     props["height"] = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
     props["frames"] = cap.get(cv2.CAP_PROP_FRAME_COUNT)
     props["fps"] = cap.get(cv2.CAP_PROP_FPS)
 
+    print()
     print(f"Capture properties:")
     print(f"Width: {props['width']}")
     print(f"Height: {props['height']}")
     print(f"FPS: {props['fps']}")
     print(f"Total Frames: {props['frames']}")
     print(f"Length: {timedelta(seconds=props['frames']/props['fps'])}")
+    print(f"Is stream: {props['is_stream']}")
     print()
 
     return props

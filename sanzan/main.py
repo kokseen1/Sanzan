@@ -8,9 +8,12 @@ class _Cryptor:
         self.shuf_order = None
         self.out = None
 
-        # TODO: Handle url stream
+        # Path is a stream url
         if self.ipath.startswith("http"):
-            pass
+            from vidgear.gears import CamGear
+
+            self.cap = CamGear(source=self.ipath, stream_mode=True, logging=False).start()
+            print(f"Opened stream: {self.ipath}")
         # Path is a file
         else:
             if not os.path.isfile(self.ipath):
@@ -54,6 +57,8 @@ class Encryptor(_Cryptor):
         self.shuf_order = super()._gen_key(height=self.props["height"], password=password)
 
         if not path:
+            if self.props["is_stream"]:
+                self.ipath = self.ipath.replace(":", "").replace("/", "")
             path = f"{self.ipath}.key"
         self.shuf_order.tofile(path)
         self.kpath = path
@@ -67,10 +72,16 @@ class Encryptor(_Cryptor):
         print(f"Encrypting with keyfile {os.path.basename(self.kpath)}")
 
         for i in tqdm(range(int(self.props["frames"])), disable=silent):
-            success, frame = self.cap.read()
-            if not success:
-                print(f"Failed to read frame {i}!")
-                break
+            if self.props["is_stream"]:
+                frame = self.cap.read()
+                if frame is None:
+                    print(f"Failed to read frame {i}!")
+                    break
+            else:
+                success, frame = self.cap.read()
+                if not success:
+                    print(f"Failed to read frame {i}!")
+                    break
 
             frame_arr = np.array(frame, dtype=np.uint8)
             frame_arr = frame_arr[self.shuf_order]
@@ -121,10 +132,16 @@ class Decryptor(_Cryptor):
             raise SZException("No key found. Use `set_key` to set a key first.")
 
         for i in tqdm(range(int(self.props["frames"])), disable=silent):
-            success, frame = self.cap.read()
-            if not success:
-                print(f"Failed to read frame {i}!")
-                break
+            if self.props["is_stream"]:
+                frame = self.cap.read()
+                if frame is None:
+                    print(f"Failed to read frame {i}!")
+                    break
+            else:
+                success, frame = self.cap.read()
+                if not success:
+                    print(f"Failed to read frame {i}!")
+                    break
 
             frame_arr = np.array(frame, dtype=np.uint8)
             frame_arr = frame_arr[self.unshuf_order]

@@ -36,12 +36,33 @@ pip install sanzan
 
 ### Encryption
 
+#### With password
+
+```shell
+sz -e original.mp4 -o encrypted.mp4 -pw <password>
+```
+
+#### With randomly generated key
+
 ```shell
 sz -e original.mp4 -o encrypted.mp4
 ```
 
+#### On streams
+
+```shell
+sz -e https://youtu.be/dQw4w9WgXcQ -o encrypted.mp4
+```
 
 ### Decryption
+
+#### With password
+
+```shell
+sz -d encrypted.mp4 -o decrypted.mp4 -pw <password>
+```
+
+#### With keyfile
 
 ```shell
 sz -d encrypted.mp4 -o decrypted.mp4 -k <keyfile>

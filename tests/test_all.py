@@ -14,12 +14,13 @@ VIDEO_ENC_FILENAME = "enc.mp4"
 VIDEO_DEC_FILENAME = "dec.mp4"
 
 NONEXISTENT_FILENAME = "nonexistent.mp4"
+INVALID_FILENAME = "sanzan.invalid"
 
 VIDEO_PASSWORD = "p@ssw0rd"
 
 # VIDEO_ENC_HASH = "8c3a456c57e87a4cb5cb181c11e38971ab660c01"
 VIDEO_ENC_HASH = "DBD4F1E1666820C600519A5A2A3799FE3D440CB8"
-VIDEO_DEC_HASH = "474af33ab79d002c3ce390fa9ea8fca38697c1a0"
+VIDEO_DEC_HASH = "CC111EBCB17BB01034F6A47AB5FEE6B4A5171814"
 
 
 def assert_file_hash(filename, hash):
@@ -41,6 +42,7 @@ def test_enc_dec_pw(tmp_path):
 
     d = sz.Decryptor(VIDEO_ENC_FILENAME)
     d.set_key(password=VIDEO_PASSWORD)
+    d.set_audio_key(password=VIDEO_PASSWORD)
     d.set_output(VIDEO_DEC_FILENAME)
     d.run()
 
@@ -52,7 +54,7 @@ def test_dec_keyfile(tmp_path):
 
     e = sz.Encryptor(video_path)
     e.gen_key(password=VIDEO_PASSWORD)
-    e.gen_audio_key(password=VIDEO_PASSWORD)
+    e.gen_audio_key(password=VIDEO_PASSWORD, export=True)
     e.set_output(VIDEO_ENC_FILENAME)
     e.run()
 
@@ -60,6 +62,7 @@ def test_dec_keyfile(tmp_path):
 
     d = sz.Decryptor(VIDEO_ENC_FILENAME)
     d.set_key(path=tmp_path / Path(VIDEO_FILENAME + ".key"))
+    d.set_audio_key(path=tmp_path / Path(VIDEO_FILENAME + ".szak"))
     d.set_output(VIDEO_DEC_FILENAME)
     d.run()
 
@@ -116,4 +119,6 @@ def test_invalid_format(tmp_path):
     with pytest.raises(OSError):
         video_path = shutil.copy(Path(TESTS_DIR) / VIDEO_FILENAME, tmp_path)
         e = sz.Encryptor(video_path)
-        e.set_output("invalid")
+        e.set_output(INVALID_FILENAME)
+    path = Path(INVALID_FILENAME)
+    path.unlink()

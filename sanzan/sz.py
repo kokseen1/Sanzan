@@ -9,7 +9,8 @@ def main(args=None):
     ifile_group.add_argument("-e", "--encrypt", help="path of file to encrypt", type=str)
     ifile_group.add_argument("-d", "--decrypt", help="path of file to decrypt", type=str)
 
-    parser.add_argument("-k", "--key", help="path of keyfile", type=str)
+    parser.add_argument("-k", "--key", help="path of video keyfile", type=str)
+    parser.add_argument("-ka", "--audiokey", help="path of audio keyfile", type=str)
     parser.add_argument("-o", "--output", help="path of output file", type=str)
     parser.add_argument("-pw", "--password", help="password to encrypt or decrypt", type=str)
     parser.add_argument("-c", "--chunksize", help="audio chunksize", type=int)
@@ -34,6 +35,7 @@ def main(args=None):
 
         x = Decryptor(args.decrypt)
         x.set_key(args.key, args.password)
+        x.set_audio_key(args.audiokey, args.password, args.chunksize)
 
     if args.output:
         x.set_output(args.output)

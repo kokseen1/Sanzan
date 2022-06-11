@@ -4,7 +4,7 @@
 [![tests](https://github.com/kokseen1/Sanzan/actions/workflows/test.yml/badge.svg)](https://github.com/kokseen1/Sanzan/actions/workflows/test.yml)
 [![PyPI Version](https://img.shields.io/pypi/v/sanzan.svg)](https://pypi.python.org/pypi/sanzan/)
 
-Quick and simple video obfuscation
+Quick and simple video and audio obfuscation
 
 ## Demo
 
@@ -91,4 +91,4 @@ Use the optional `-s` flag to hide the progress bar. Might improve performance.
 
 <!-- - `vidgear` is used for streaming, but will fall back to `YDL` if streaming is unavailable. -->
 
-- Audio is not yet supported.
+- Audio is ~~not yet~~ finally supported!

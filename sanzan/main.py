@@ -8,6 +8,7 @@ class _Cryptor:
         self.shuf_order = None
         self.shuf_order_audio = None
         self.out = None
+        self.outpath = None
         self.mediainfo = None
         self.audio_raw = None
         self.new_audio_list = None
@@ -100,6 +101,7 @@ class Encryptor(_Cryptor):
 
         self.shuf_order_audio = super()._gen_key(height=audio_length, password=password)
 
+        # TODO: Change key output path to outpath
         if export or not password:
             path = f"{self.ipath}.szak"
             self.shuf_order_audio.tofile(path)
@@ -114,7 +116,7 @@ class Encryptor(_Cryptor):
         if type(self.shuf_order) is not np.ndarray:
             raise SZException("No key found. Use `gen_key` to generate a key first.")
 
-        if self.audio_raw and not preview:
+        if self.audio_raw and self.outpath:
             if type(self.shuf_order_audio) is not np.ndarray:
                 raise SZException("No audio key found. Use `gen_audio_key` to generate a key first.")
 
@@ -154,7 +156,7 @@ class Encryptor(_Cryptor):
         if self.out:
             self.out.release()
 
-        if self.audio_raw and not preview:
+        if self.audio_raw and self.outpath:
             audio_enc = audio_sum_future.result()
             audio_enc.export(f"{self.outpath}.sza", bitrate=self.mediainfo["bit_rate"])
 
@@ -176,6 +178,7 @@ class Decryptor(_Cryptor):
         if type(self.unshuf_order) is np.ndarray:
             raise SZException("`set_key` was called twice!")
 
+        # TODO: Prioritise keypath over password
         if path and password:
             raise SZException("Both keypath and password were specified!")
 
@@ -194,6 +197,42 @@ class Decryptor(_Cryptor):
 
         return self
 
+    def set_audio_key(self, path=None, password=None, chunksize=None):
+        if type(self.new_audio_list) is np.ndarray:
+            raise SZException("`set_audio_key` was called twice!")
+
+        if path and password:
+            raise SZException("Both audio keypath and password were specified!")
+
+        if not chunksize:
+            chunksize = AUDIO_CHUNKSIZE
+
+        print(f"Using audio chunksize of {chunksize}ms")
+        audio_iter = self.audio_raw[::chunksize]
+        audio_list = list(audio_iter)
+        audio_last_chunk_size = len(audio_list[-1])
+
+        if audio_last_chunk_size != chunksize:
+            print(f"Removing last audio chunk of {audio_last_chunk_size}ms")
+            del audio_list[-1]
+
+        audio_length = len(audio_list)
+
+        if path:
+            print(f"Decrypting audio with keyfile {os.path.basename(path)}")
+            self.shuf_order_audio = np.fromfile(path, dtype="int")
+        elif password:
+            self.shuf_order_audio = super()._gen_key(height=audio_length, password=password)
+        else:
+            raise SZException("No audio keypath or password specifed.")
+
+        self.new_audio_list = np.empty(audio_length, dtype=object)
+
+        for idx, pos in enumerate(self.shuf_order_audio):
+            self.new_audio_list[idx] = audio_list[pos]
+
+        return self
+
     def run(self, preview=False, silent=False) -> None:
         if type(self.unshuf_order) is not np.ndarray:
             # try_kpath = f"{self.ipath}.key"
@@ -201,7 +240,17 @@ class Decryptor(_Cryptor):
             # self.set_key(try_kpath)
             raise SZException("No key found. Use `set_key` to set a key first.")
 
-        for i in tqdm(range(int(self.props["frames"])), disable=silent):
+        # TODO: Support audio preview
+        if self.audio_raw and self.outpath:
+            if type(self.new_audio_list) is not np.ndarray:
+                raise SZException("No audio key found. Use `set_audio_key` to set a key first.")
+
+            from concurrent.futures import ThreadPoolExecutor
+
+            executor = ThreadPoolExecutor()
+            audio_sum_future = executor.submit(sum, tqdm(self.new_audio_list, desc="Audio", disable=silent, position=1, leave=True))
+
+        for i in tqdm(range(int(self.props["frames"])), desc="Video", disable=silent, position=0):
             if self.props["is_stream"]:
                 frame = self.cap.read()
                 if frame is None:
@@ -228,3 +277,14 @@ class Decryptor(_Cryptor):
             self.cap.release()
         if self.out:
             self.out.release()
+
+        if self.audio_raw and self.outpath:
+            audio_enc = audio_sum_future.result()
+            audio_enc.export(f"{self.outpath}.sza", bitrate=self.mediainfo["bit_rate"])
+
+            os.system(f"ffmpeg -hide_banner -loglevel error -i {self.outpath} -i {self.outpath}.sza -c copy -map 0:v:0 -map 1:a:0 -f mp4 {self.outpath}.szv")
+
+            if os.path.isfile(f"{self.outpath}.szv"):
+                os.remove(self.outpath)
+                os.remove(f"{self.outpath}.sza")
+                os.rename(f"{self.outpath}.szv", self.outpath)

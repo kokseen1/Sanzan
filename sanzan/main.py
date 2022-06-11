@@ -82,6 +82,10 @@ class Encryptor(_Cryptor):
 
     # TODO: Add options for reverse
     def gen_audio_key(self, password=None, chunksize=None, export=False):
+        if not self.audio_raw:
+            print("No audio stream! Skipping audio key generation")
+            return
+
         if type(self.shuf_order_audio) is np.ndarray:
             raise SZException("`gen_audio_key` was called twice!")
 
@@ -198,6 +202,10 @@ class Decryptor(_Cryptor):
         return self
 
     def set_audio_key(self, path=None, password=None, chunksize=None):
+        if not self.audio_raw:
+            print("No audio stream! Skipping audio key generation")
+            return
+            
         if type(self.new_audio_list) is np.ndarray:
             raise SZException("`set_audio_key` was called twice!")
 

@@ -17,14 +17,15 @@ NONEXISTENT_FILENAME = "nonexistent.mp4"
 
 VIDEO_PASSWORD = "p@ssw0rd"
 
-VIDEO_ENC_HASH = "8c3a456c57e87a4cb5cb181c11e38971ab660c01"
+# VIDEO_ENC_HASH = "8c3a456c57e87a4cb5cb181c11e38971ab660c01"
+VIDEO_ENC_HASH = "DBD4F1E1666820C600519A5A2A3799FE3D440CB8"
 VIDEO_DEC_HASH = "474af33ab79d002c3ce390fa9ea8fca38697c1a0"
 
 
 def assert_file_hash(filename, hash):
     with open(filename, "rb") as f:
         raw = f.read()
-    assert hashlib.sha1(raw).hexdigest() == hash
+    assert hashlib.sha1(raw).hexdigest() == hash.lower()
 
 
 def test_enc_dec_pw(tmp_path):
@@ -32,6 +33,7 @@ def test_enc_dec_pw(tmp_path):
 
     e = sz.Encryptor(video_path)
     e.gen_key(password=VIDEO_PASSWORD)
+    e.gen_audio_key(password=VIDEO_PASSWORD)
     e.set_output(VIDEO_ENC_FILENAME)
     e.run()
 
@@ -50,6 +52,7 @@ def test_dec_keyfile(tmp_path):
 
     e = sz.Encryptor(video_path)
     e.gen_key(password=VIDEO_PASSWORD)
+    e.gen_audio_key(password=VIDEO_PASSWORD)
     e.set_output(VIDEO_ENC_FILENAME)
     e.run()
 

@@ -12,9 +12,11 @@ def main(args=None):
     parser.add_argument("-k", "--key", help="path of keyfile", type=str)
     parser.add_argument("-o", "--output", help="path of output file", type=str)
     parser.add_argument("-pw", "--password", help="password to encrypt or decrypt", type=str)
+    parser.add_argument("-c", "--chunksize", help="audio chunksize", type=int)
 
     parser.add_argument("-p", "--preview", action="store_true", help="show real time preview of output")
     parser.add_argument("-s", "--silent", action="store_true", help="hide progress bar")
+    parser.add_argument("-ex", "--export", action="store_true", help="export keyfiles")
 
     args = parser.parse_args(args)
 
@@ -24,6 +26,7 @@ def main(args=None):
     if args.encrypt:
         x = Encryptor(args.encrypt)
         x.gen_key(args.key, args.password)
+        x.gen_audio_key(args.password, args.chunksize, args.export)
 
     if args.decrypt:
         if not (args.key or args.password):

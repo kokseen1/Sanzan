@@ -2,11 +2,15 @@ import cv2
 from tqdm import tqdm
 import numpy as np
 from datetime import timedelta
+from pydub import AudioSegment
+from pydub.utils import mediainfo
 
 OPTIONS = {
     "format": "bestvideo",
     "extractaudio": False,
 }
+
+AUDIO_CHUNKSIZE = 100
 
 
 class SZException(Exception):

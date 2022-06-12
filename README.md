@@ -18,7 +18,7 @@ Decrypted Video:
 
 ## Prerequisites
 
-`ffmpeg` must be installed and in `PATH`.
+[`ffmpeg`](https://www.ffmpeg.org/download.html) must be installed and in `PATH`.
 
 ## Installation
 

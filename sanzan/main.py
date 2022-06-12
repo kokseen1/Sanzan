@@ -102,6 +102,7 @@ class Encryptor(_Cryptor):
             audio_list[-1] += AudioSegment.silent(padding_length)
 
         audio_length = len(audio_list)
+        print(f"Number of chunks: {audio_length}")
 
         self.shuf_order_audio = super()._gen_key(height=audio_length, password=password)
 
@@ -205,7 +206,7 @@ class Decryptor(_Cryptor):
         if not self.audio_raw:
             print("No audio stream! Skipping audio key generation")
             return
-            
+
         if type(self.new_audio_list) is np.ndarray:
             raise SZException("`set_audio_key` was called twice!")
 
@@ -225,6 +226,7 @@ class Decryptor(_Cryptor):
             del audio_list[-1]
 
         audio_length = len(audio_list)
+        print(f"Number of chunks: {audio_length}")
 
         if path:
             print(f"Decrypting audio with keyfile {os.path.basename(path)}")

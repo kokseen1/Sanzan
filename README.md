@@ -16,16 +16,10 @@ Decrypted Video:
 
 ![Decrypted](https://raw.githubusercontent.com/kokseen1/Sanzan/main/img/dec.gif?raw=True)
 
-<!-- <p align="center">
- <p align="center">Obfuscated Video:<p align="center">
-  <img src="https://raw.githubusercontent.com/kokseen1/Sanzan/main/img/obfuscated.png?raw=True" width="70%" alt="Obfuscated Video"/>
-</p>
+## Prerequisites
 
-<p align="center">
- <p align="center">Deobfuscated Video:<p align="center">
-  <img src="https://raw.githubusercontent.com/kokseen1/Sanzan/main/img/deobfuscated.png?raw=True" width="70%" alt="Deobfuscated Video"/>
-</p> -->
- 
+`ffmpeg` must be installed and in `PATH`.
+
 ## Installation
 
 ```shell
@@ -70,20 +64,23 @@ sz -d encrypted.mp4 -o decrypted.mp4 -k <keyfile>
 
 ## More Usage
 
-When encrypting, use the optional `-k` flag to specify the path of the generated keyfile.
-
-```shell
-sz -e original.mp4 -o encrypted.mp4 -k <generated keyfile>
-```
-
 Use the optional `-p` flag to view a real time preview of the output. This flag can be used alone or along with the `-o` argument.
 
 ```shell
 sz -d encrypted.mp4 -o decrypted.mp4 -k <keyfile> -p
 ```
 
-Use the optional `-s` flag to hide the progress bar. Might improve performance.
+Use the optional `-s` flag to hide progress bars. Might improve performance.
 
+Use the optional `-c` flag to specify the audio chunksize. The default is `100`.
+
+Use the optional `-ex` flag to export keyfiles.
+
+When encrypting, use the optional `-k` flag to specify the path of the generated keyfile.
+
+```shell
+sz -e original.mp4 -o encrypted.mp4 -k <generated keyfile>
+```
 
 ## Note
 

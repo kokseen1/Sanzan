@@ -163,7 +163,7 @@ class Encryptor(_Cryptor):
 
         if self.audio_raw and self.outpath:
             audio_enc = audio_sum_future.result()
-            audio_enc.export(f"{self.outpath}.sza", bitrate=self.mediainfo["bit_rate"])
+            audio_enc.export(f"{self.outpath}.sza", bitrate="320k")
 
             # TODO: Support more formats
             os.system(f"ffmpeg -hide_banner -loglevel error -i {self.outpath} -i {self.outpath}.sza -c copy -map 0:v:0 -map 1:a:0 -f mp4 {self.outpath}.szv")
@@ -290,7 +290,7 @@ class Decryptor(_Cryptor):
 
         if self.audio_raw and self.outpath:
             audio_enc = audio_sum_future.result()
-            audio_enc.export(f"{self.outpath}.sza", bitrate=self.mediainfo["bit_rate"])
+            audio_enc.export(f"{self.outpath}.sza", bitrate="320k")
 
             os.system(f"ffmpeg -hide_banner -loglevel error -i {self.outpath} -i {self.outpath}.sza -c copy -map 0:v:0 -map 1:a:0 -f mp4 {self.outpath}.szv")
 

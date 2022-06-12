@@ -120,5 +120,7 @@ def test_invalid_format(tmp_path):
         video_path = shutil.copy(Path(TESTS_DIR) / VIDEO_FILENAME, tmp_path)
         e = sz.Encryptor(video_path)
         e.set_output(INVALID_FILENAME)
+
     path = Path(INVALID_FILENAME)
-    path.unlink()
+    if path.exists():
+        path.unlink()

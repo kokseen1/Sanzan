@@ -18,6 +18,7 @@ def main(args=None):
     parser.add_argument("-p", "--preview", action="store_true", help="show real time preview of output")
     parser.add_argument("-s", "--silent", action="store_true", help="hide progress bar")
     parser.add_argument("-ex", "--export", action="store_true", help="export keyfiles")
+    parser.add_argument("-na", "--noaudio", action="store_true", help="remove audio track")
 
     args = parser.parse_args(args)
 
@@ -25,7 +26,7 @@ def main(args=None):
         parser.error("no action specified, add -o or -p")
 
     if args.encrypt:
-        x = Encryptor(args.encrypt)
+        x = Encryptor(args.encrypt, noaudio=args.noaudio)
         x.gen_key(args.key, args.password)
         x.gen_audio_key(args.password, args.chunksize, args.export)
 
@@ -33,7 +34,7 @@ def main(args=None):
         if not (args.key or args.password):
             parser.error("keyfile or password not specified, add -k or -pw")
 
-        x = Decryptor(args.decrypt)
+        x = Decryptor(args.decrypt, noaudio=args.noaudio)
         x.set_key(args.key, args.password)
         x.set_audio_key(args.audiokey, args.password, args.chunksize)
 

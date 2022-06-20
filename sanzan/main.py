@@ -3,7 +3,7 @@ import os
 
 
 class _Cryptor:
-    def __init__(self, ipath) -> None:
+    def __init__(self, ipath, noaudio=False) -> None:
         self.ipath = ipath
         self.shuf_order = None
         self.shuf_order_audio = None
@@ -30,7 +30,7 @@ class _Cryptor:
             print(f"Opened file: {os.path.basename(self.ipath)}")
 
             self.mediainfo = mediainfo(self.ipath)
-            if self.mediainfo["codec_type"] == "audio":
+            if self.mediainfo["codec_type"] == "audio" and not noaudio:
                 self.audio_raw = AudioSegment.from_file(self.ipath)
                 print(f"Audio track found: {self.mediainfo['codec_name']} {self.mediainfo['sample_rate']}Hz {self.mediainfo['bit_rate']} bits/s")
 
@@ -175,9 +175,9 @@ class Encryptor(_Cryptor):
 
 
 class Decryptor(_Cryptor):
-    def __init__(self, ipath):
+    def __init__(self, *args, **kwargs):
         self.unshuf_order = None
-        super().__init__(ipath)
+        super().__init__(*args, **kwargs)
 
     def set_key(self, path=None, password=None):
         if type(self.unshuf_order) is np.ndarray:

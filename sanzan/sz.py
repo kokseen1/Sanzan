@@ -9,7 +9,7 @@ def main(args=None):
     ifile_group.add_argument("-e", "--encrypt", help="path of file to encrypt", type=str)
     ifile_group.add_argument("-d", "--decrypt", help="path of file to decrypt", type=str)
 
-    parser.add_argument("-k", "--key", help="path of video keyfile", type=str)
+    parser.add_argument("-kv", "--videokey", help="path of video keyfile", type=str)
     parser.add_argument("-ka", "--audiokey", help="path of audio keyfile", type=str)
     parser.add_argument("-o", "--output", help="path of output file", type=str)
     parser.add_argument("-pw", "--password", help="password to encrypt or decrypt", type=str)
@@ -27,15 +27,15 @@ def main(args=None):
 
     if args.encrypt:
         x = Encryptor(args.encrypt, noaudio=args.noaudio)
-        x.gen_key(args.key, args.password, args.export)
+        x.gen_key(args.videokey, args.password, args.export)
         x.gen_audio_key(args.password, args.chunksize, args.export)
 
     if args.decrypt:
-        if not (args.key or args.password):
-            parser.error("keyfile or password not specified, add -k or -pw")
+        if not (args.videokey or args.password):
+            parser.error("keyfile or password not specified, add -kv or -pw")
 
         x = Decryptor(args.decrypt, noaudio=args.noaudio)
-        x.set_key(args.key, args.password)
+        x.set_key(args.videokey, args.password)
         x.set_audio_key(args.audiokey, args.password, args.chunksize)
 
     if args.output:

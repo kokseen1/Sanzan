@@ -194,6 +194,10 @@ class Decryptor(_Cryptor):
         else:
             raise SZException("No keypath or password specifed.")
 
+        video_key_length = len(self.shuf_order)
+        if video_key_length != int(self.props["height"]):
+            raise SZException(f"Key mismatch! Using key of length {video_key_length} to decrypt video of length {int(self.props['height'])}.")
+
         self.unshuf_order = np.zeros_like(self.shuf_order)
         self.unshuf_order[self.shuf_order] = np.arange(int(self.props["height"]))
 
@@ -231,9 +235,13 @@ class Decryptor(_Cryptor):
         elif password:
             self.shuf_order_audio = super()._gen_key(height=audio_length, password=password)
         else:
-            raise SZException("No audio keypath or password specifed.")
+            raise SZException("No audio keypath or password specifed. Use the `noaudio` flag to ignore audio.")
 
         self.new_audio_list = np.empty(audio_length, dtype=object)
+
+        audio_key_length = len(self.shuf_order_audio)
+        if audio_key_length != audio_length:
+            raise SZException(f"Key mismatch! Using key of length {audio_key_length} to decrypt audio of length {audio_length}.")
 
         for idx, pos in enumerate(self.shuf_order_audio):
             self.new_audio_list[idx] = audio_list[pos]

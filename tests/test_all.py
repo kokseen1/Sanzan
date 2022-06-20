@@ -8,7 +8,7 @@ from sanzan.etc import SZException
 TESTS_DIR = "tests"
 
 VIDEO_FILENAME = "video.mp4"
-VIDEO_KEYPATH = "keyfile.key"
+VIDEO_KEYPATH = "keyfile.szvk"
 
 VIDEO_ENC_FILENAME = "enc.mp4"
 VIDEO_DEC_FILENAME = "dec.mp4"
@@ -53,7 +53,7 @@ def test_dec_keyfile(tmp_path):
     video_path = shutil.copy(Path(TESTS_DIR) / VIDEO_FILENAME, tmp_path)
 
     e = sz.Encryptor(video_path)
-    e.gen_key(password=VIDEO_PASSWORD)
+    e.gen_key(password=VIDEO_PASSWORD, export=True)
     e.gen_audio_key(password=VIDEO_PASSWORD, export=True)
     e.set_output(VIDEO_ENC_FILENAME)
     e.run()
@@ -61,7 +61,7 @@ def test_dec_keyfile(tmp_path):
     assert_file_hash(VIDEO_ENC_FILENAME, VIDEO_ENC_HASH)
 
     d = sz.Decryptor(VIDEO_ENC_FILENAME)
-    d.set_key(path=tmp_path / Path(VIDEO_FILENAME + ".key"))
+    d.set_key(path=tmp_path / Path(VIDEO_FILENAME + ".szvk"))
     d.set_audio_key(path=tmp_path / Path(VIDEO_FILENAME + ".szak"))
     d.set_output(VIDEO_DEC_FILENAME)
     d.run()

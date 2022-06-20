@@ -65,7 +65,7 @@ class _Cryptor:
 
 class Encryptor(_Cryptor):
     # TODO: Support export flag
-    def gen_key(self, path=None, password=None):
+    def gen_key(self, path=None, password=None, export=False):
         if type(self.shuf_order) is np.ndarray:
             raise SZException("`gen_key` was called twice!")
 
@@ -74,9 +74,10 @@ class Encryptor(_Cryptor):
         if not path:
             if self.props["is_stream"]:
                 self.ipath = self.ipath.replace(":", "").replace("/", "")
-            path = f"{self.ipath}.key"
-        self.shuf_order.tofile(path)
-        self.kpath = path
+            path = f"{self.ipath}.szvk"
+
+        if export or not password:
+            self.shuf_order.tofile(path)
 
         return self
 
@@ -129,8 +130,6 @@ class Encryptor(_Cryptor):
 
             executor = ThreadPoolExecutor()
             audio_sum_future = executor.submit(sum, tqdm(self.new_audio_list, desc="Audio", disable=silent, position=1, leave=True))
-
-        # print(f"Encrypting with keyfile {os.path.basename(self.kpath)}")
 
         for i in tqdm(range(int(self.props["frames"])), desc="Video", disable=silent, position=0):
             # TODO: Skip frame if error
@@ -187,11 +186,9 @@ class Decryptor(_Cryptor):
         if path and password:
             raise SZException("Both keypath and password were specified!")
 
-        self.kpath = path
-
-        if self.kpath:
-            self.shuf_order = np.fromfile(self.kpath, dtype="int")
-            print(f"Decrypting with keyfile {os.path.basename(self.kpath)}")
+        if path:
+            self.shuf_order = np.fromfile(path, dtype="int")
+            print(f"Decrypting with keyfile {os.path.basename(path)}")
         elif password:
             self.shuf_order = super()._gen_key(height=self.props["height"], password=password)
         else:
@@ -245,9 +242,6 @@ class Decryptor(_Cryptor):
 
     def run(self, preview=False, silent=False) -> None:
         if type(self.unshuf_order) is not np.ndarray:
-            # try_kpath = f"{self.ipath}.key"
-            # print(f"`set_key` was not used. Trying default path {try_kpath}.")
-            # self.set_key(try_kpath)
             raise SZException("No key found. Use `set_key` to set a key first.")
 
         # TODO: Support audio preview

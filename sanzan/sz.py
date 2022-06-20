@@ -27,7 +27,7 @@ def main(args=None):
 
     if args.encrypt:
         x = Encryptor(args.encrypt, noaudio=args.noaudio)
-        x.gen_key(args.key, args.password)
+        x.gen_key(args.key, args.password, args.export)
         x.gen_audio_key(args.password, args.chunksize, args.export)
 
     if args.decrypt:

@@ -262,10 +262,10 @@ class Decryptor(_Cryptor):
             if type(self.new_audio_list) is not np.ndarray:
                 raise SZException("No audio key found. Use `set_audio_key` to set a key first.")
 
-            from concurrent.futures import ThreadPoolExecutor
-
-            executor = ThreadPoolExecutor()
-            audio_sum_future = executor.submit(sum, tqdm(self.new_audio_list, desc="Audio", disable=silent, position=1, leave=True))
+            executor = ProcessPoolExecutor()
+            worker_load = int(len(self.new_audio_list)/(os.cpu_count()*5)) + 1
+            print(f"Multiprocessing audio: {worker_load} chunks/worker")
+            audio_sum_future = executor.map(sum, self._gen_chunks(self.new_audio_list, worker_load))
 
         for i in tqdm(range(int(self.props["frames"])), desc="Video", disable=silent, position=0):
             if self.props["is_stream"]:
@@ -296,7 +296,7 @@ class Decryptor(_Cryptor):
             self.out.release()
 
         if self.audio_raw and self.outpath:
-            audio_enc = audio_sum_future.result()
+            audio_enc = sum(audio_sum_future)
             audio_enc.export(f"{self.outpath}.sza", bitrate="320k")
 
             os.system(f"ffmpeg -hide_banner -loglevel error -i {self.outpath} -i {self.outpath}.sza -c copy -map 0:v:0 -map 1:a:0 -f mp4 {self.outpath}.szv")

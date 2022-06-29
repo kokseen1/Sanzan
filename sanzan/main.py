@@ -136,7 +136,8 @@ class Encryptor(_Cryptor):
 
             # TODO: Implement tqdm with multiprocessing
             executor = ProcessPoolExecutor()
-            worker_load = int(len(self.new_audio_list)/50) + 10
+            worker_load = int(len(self.new_audio_list)/(os.cpu_count()*5)) + 1
+            print(f"Multiprocessing audio: {worker_load} chunks/worker")
             audio_sum_future = executor.map(sum, self._gen_chunks(self.new_audio_list, worker_load))
 
         for i in tqdm(range(int(self.props["frames"])), desc="Video", disable=silent, position=0):

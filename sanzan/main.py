@@ -62,6 +62,9 @@ class _Cryptor:
 
         return shuf_order
 
+    def _gen_chunks(self, lst, n):
+        for i in range(0, len(lst), n):
+            yield lst[i:i + n]
 
 class Encryptor(_Cryptor):
     # TODO: Support export flag
@@ -126,10 +129,16 @@ class Encryptor(_Cryptor):
             if type(self.shuf_order_audio) is not np.ndarray:
                 raise SZException("No audio key found. Use `gen_audio_key` to generate a key first.")
 
-            from concurrent.futures import ThreadPoolExecutor
+            from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 
-            executor = ThreadPoolExecutor()
-            audio_sum_future = executor.submit(sum, tqdm(self.new_audio_list, desc="Audio", disable=silent, position=1, leave=True))
+            # executor = ThreadPoolExecutor()
+            # audio_sum_future = executor.submit(sum, tqdm(self.new_audio_list, desc="Audio", disable=silent, position=1, leave=True))
+
+            # TODO: Implement tqdm with multiprocessing
+            executor = ProcessPoolExecutor()
+            worker_load = int(len(self.new_audio_list)/(os.cpu_count()*5)) + 1
+            print(f"Multiprocessing audio: {worker_load} chunks/worker")
+            audio_sum_future = executor.map(sum, self._gen_chunks(self.new_audio_list, worker_load))
 
         for i in tqdm(range(int(self.props["frames"])), desc="Video", disable=silent, position=0):
             # TODO: Skip frame if error
@@ -161,7 +170,8 @@ class Encryptor(_Cryptor):
             self.out.release()
 
         if self.audio_raw and self.outpath:
-            audio_enc = audio_sum_future.result()
+            # audio_enc = audio_sum_future.result()
+            audio_enc = sum(audio_sum_future)
             audio_enc.export(f"{self.outpath}.sza", bitrate="320k")
 
             # TODO: Support more formats

@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="Sanzan",
-    version="0.2.2",
+    version="0.2.3",
     packages=["sanzan"],
     description="Quick and simple video and audio obfuscation",
     long_description=long_description,

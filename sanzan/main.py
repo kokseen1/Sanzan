@@ -32,8 +32,9 @@ class _Cryptor:
 
             self.mediainfo = mediainfo(self.ipath)
             if self.mediainfo["codec_type"] == "audio" and not noaudio:
+                print(f"Retrieving audio...")
                 self.audio_raw = AudioSegment.from_file(self.ipath)
-                print(f"Audio track found: {self.mediainfo['codec_name']} {self.mediainfo['sample_rate']}Hz {self.mediainfo['bit_rate']} bits/s")
+                print(f"Audio track: {self.mediainfo['codec_name']} {self.mediainfo['sample_rate']}Hz")
 
         self.props = get_properties(self.cap)
 
@@ -56,7 +57,6 @@ class _Cryptor:
         shuf_order = np.arange(int(height))
         if password:
             np.random.seed(bytearray(password, encoding="utf8"))
-            print(f"Generating key with password")
         np.random.shuffle(shuf_order)
         if password:
             np.random.seed()
@@ -81,7 +81,7 @@ class _Cryptor:
                 raise SZException("No audio key found!")
 
             executor = ProcessPoolExecutor(4)
-            worker_load = int(len(self.new_audio_list)/(os.cpu_count()*5)) + 1
+            worker_load = int(len(self.new_audio_list) / (os.cpu_count() * 5)) + 1
             print(f"Multiprocessing audio: {worker_load} chunks/worker")
             audio_sum_future = executor.map(sum, self._gen_chunks(self.new_audio_list, worker_load))
 
@@ -115,6 +115,7 @@ class _Cryptor:
             self.out.release()
 
         if self.audio_raw and self.outpath:
+            print(f"Merging audio and video...")
             audio_enc = sum(audio_sum_future)
             audio_enc.export(f"{self.outpath}.sza", bitrate="320k")
 
@@ -128,7 +129,8 @@ class _Cryptor:
 
     def _gen_chunks(self, lst, n):
         for i in range(0, len(lst), n):
-            yield lst[i:i + n]
+            yield lst[i : i + n]
+
 
 class Encryptor(_Cryptor):
     # TODO: Support export flag
@@ -170,7 +172,7 @@ class Encryptor(_Cryptor):
             audio_list[-1] += AudioSegment.silent(padding_length)
 
         audio_length = len(audio_list)
-        print(f"Number of chunks: {audio_length}")
+        print(f"No. of chunks: {audio_length}")
 
         self.shuf_order_audio = super()._gen_key(height=audio_length, password=password)
 
@@ -240,7 +242,7 @@ class Decryptor(_Cryptor):
             del audio_list[-1]
 
         audio_length = len(audio_list)
-        print(f"Number of chunks: {audio_length}")
+        print(f"No. of chunks: {audio_length}")
 
         if path:
             print(f"Decrypting audio with keyfile {os.path.basename(path)}")
@@ -260,4 +262,3 @@ class Decryptor(_Cryptor):
             self.new_audio_list[idx] = audio_list[pos]
 
         return self
-

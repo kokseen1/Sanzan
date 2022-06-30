@@ -131,7 +131,7 @@ class Encryptor(_Cryptor):
                 raise SZException("No audio key found. Use `gen_audio_key` to generate a key first.")
 
             # TODO: Implement tqdm with multiprocessing
-            executor = ProcessPoolExecutor()
+            executor = ProcessPoolExecutor(4)
             worker_load = int(len(self.new_audio_list)/(os.cpu_count()*5)) + 1
             print(f"Multiprocessing audio: {worker_load} chunks/worker")
             audio_sum_future = executor.map(sum, self._gen_chunks(self.new_audio_list, worker_load))
@@ -262,7 +262,7 @@ class Decryptor(_Cryptor):
             if type(self.new_audio_list) is not np.ndarray:
                 raise SZException("No audio key found. Use `set_audio_key` to set a key first.")
 
-            executor = ProcessPoolExecutor()
+            executor = ProcessPoolExecutor(4)
             worker_load = int(len(self.new_audio_list)/(os.cpu_count()*5)) + 1
             print(f"Multiprocessing audio: {worker_load} chunks/worker")
             audio_sum_future = executor.map(sum, self._gen_chunks(self.new_audio_list, worker_load))

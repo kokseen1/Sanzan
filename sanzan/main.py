@@ -63,6 +63,69 @@ class _Cryptor:
 
         return shuf_order
 
+    def run(self, preview=False, silent=False) -> None:
+        caller = self.__class__.__name__
+        if caller == "Encryptor":
+            order = self.shuf_order
+        elif caller == "Decryptor":
+            order = self.unshuf_order
+        else:
+            raise SZException("`run` called by invalid class!")
+
+        if type(order) is not np.ndarray:
+            raise SZException("No video key found!")
+
+        # TODO: Support audio preview
+        if self.audio_raw and self.outpath:
+            if type(self.new_audio_list) is not np.ndarray:
+                raise SZException("No audio key found!")
+
+            executor = ProcessPoolExecutor(4)
+            worker_load = int(len(self.new_audio_list)/(os.cpu_count()*5)) + 1
+            print(f"Multiprocessing audio: {worker_load} chunks/worker")
+            audio_sum_future = executor.map(sum, self._gen_chunks(self.new_audio_list, worker_load))
+
+        for i in tqdm(range(int(self.props["frames"])), desc="Video", disable=silent, position=0):
+            # TODO: Skip frame if error
+            if self.props["is_stream"]:
+                frame = self.cap.read()
+                if frame is None:
+                    print(f"Failed to read frame {i}!")
+                    break
+            else:
+                success, frame = self.cap.read()
+                if not success:
+                    print(f"Failed to read frame {i}!")
+                    break
+
+            frame_arr = np.array(frame, dtype=np.uint8)
+            frame_arr = frame_arr[order]
+
+            if self.out:
+                self.out.write(frame_arr)
+            if preview:
+                cv2.imshow(self.ipath, frame_arr)
+                cv2.waitKey(1)
+
+        if self.props["is_stream"]:
+            self.cap.stop()
+        else:
+            self.cap.release()
+        if self.out:
+            self.out.release()
+
+        if self.audio_raw and self.outpath:
+            audio_enc = sum(audio_sum_future)
+            audio_enc.export(f"{self.outpath}.sza", bitrate="320k")
+
+            # TODO: Support more formats
+            os.system(f"ffmpeg -hide_banner -loglevel error -i {self.outpath} -i {self.outpath}.sza -c copy -map 0:v:0 -map 1:a:0 -f mp4 {self.outpath}.szv")
+
+            if os.path.isfile(f"{self.outpath}.szv"):
+                os.remove(self.outpath)
+                os.remove(f"{self.outpath}.sza")
+                os.rename(f"{self.outpath}.szv", self.outpath)
+
     def _gen_chunks(self, lst, n):
         for i in range(0, len(lst), n):
             yield lst[i:i + n]
@@ -121,61 +184,6 @@ class Encryptor(_Cryptor):
             self.new_audio_list[pos] = chunk
 
         return self
-
-    def run(self, preview=False, silent=False) -> None:
-        if type(self.shuf_order) is not np.ndarray:
-            raise SZException("No key found. Use `gen_key` to generate a key first.")
-
-        if self.audio_raw and self.outpath:
-            if type(self.shuf_order_audio) is not np.ndarray:
-                raise SZException("No audio key found. Use `gen_audio_key` to generate a key first.")
-
-            # TODO: Implement tqdm with multiprocessing
-            executor = ProcessPoolExecutor(4)
-            worker_load = int(len(self.new_audio_list)/(os.cpu_count()*5)) + 1
-            print(f"Multiprocessing audio: {worker_load} chunks/worker")
-            audio_sum_future = executor.map(sum, self._gen_chunks(self.new_audio_list, worker_load))
-
-        for i in tqdm(range(int(self.props["frames"])), desc="Video", disable=silent, position=0):
-            # TODO: Skip frame if error
-            if self.props["is_stream"]:
-                frame = self.cap.read()
-                if frame is None:
-                    print(f"Failed to read frame {i}!")
-                    break
-            else:
-                success, frame = self.cap.read()
-                if not success:
-                    print(f"Failed to read frame {i}!")
-                    break
-
-            frame_arr = np.array(frame, dtype=np.uint8)
-            frame_arr = frame_arr[self.shuf_order]
-
-            if self.out:
-                self.out.write(frame_arr)
-            if preview:
-                cv2.imshow(self.ipath, frame_arr)
-                cv2.waitKey(1)
-
-        if self.props["is_stream"]:
-            self.cap.stop()
-        else:
-            self.cap.release()
-        if self.out:
-            self.out.release()
-
-        if self.audio_raw and self.outpath:
-            audio_enc = sum(audio_sum_future)
-            audio_enc.export(f"{self.outpath}.sza", bitrate="320k")
-
-            # TODO: Support more formats
-            os.system(f"ffmpeg -hide_banner -loglevel error -i {self.outpath} -i {self.outpath}.sza -c copy -map 0:v:0 -map 1:a:0 -f mp4 {self.outpath}.szv")
-
-            if os.path.isfile(f"{self.outpath}.szv"):
-                os.remove(self.outpath)
-                os.remove(f"{self.outpath}.sza")
-                os.rename(f"{self.outpath}.szv", self.outpath)
 
 
 class Decryptor(_Cryptor):
@@ -253,55 +261,3 @@ class Decryptor(_Cryptor):
 
         return self
 
-    def run(self, preview=False, silent=False) -> None:
-        if type(self.unshuf_order) is not np.ndarray:
-            raise SZException("No key found. Use `set_key` to set a key first.")
-
-        # TODO: Support audio preview
-        if self.audio_raw and self.outpath:
-            if type(self.new_audio_list) is not np.ndarray:
-                raise SZException("No audio key found. Use `set_audio_key` to set a key first.")
-
-            executor = ProcessPoolExecutor(4)
-            worker_load = int(len(self.new_audio_list)/(os.cpu_count()*5)) + 1
-            print(f"Multiprocessing audio: {worker_load} chunks/worker")
-            audio_sum_future = executor.map(sum, self._gen_chunks(self.new_audio_list, worker_load))
-
-        for i in tqdm(range(int(self.props["frames"])), desc="Video", disable=silent, position=0):
-            if self.props["is_stream"]:
-                frame = self.cap.read()
-                if frame is None:
-                    print(f"Failed to read frame {i}!")
-                    break
-            else:
-                success, frame = self.cap.read()
-                if not success:
-                    print(f"Failed to read frame {i}!")
-                    break
-
-            frame_arr = np.array(frame, dtype=np.uint8)
-            frame_arr = frame_arr[self.unshuf_order]
-
-            if self.out:
-                self.out.write(frame_arr)
-            if preview:
-                cv2.imshow(self.ipath, frame_arr)
-                cv2.waitKey(1)
-
-        if self.props["is_stream"]:
-            self.cap.stop()
-        else:
-            self.cap.release()
-        if self.out:
-            self.out.release()
-
-        if self.audio_raw and self.outpath:
-            audio_enc = sum(audio_sum_future)
-            audio_enc.export(f"{self.outpath}.sza", bitrate="320k")
-
-            os.system(f"ffmpeg -hide_banner -loglevel error -i {self.outpath} -i {self.outpath}.sza -c copy -map 0:v:0 -map 1:a:0 -f mp4 {self.outpath}.szv")
-
-            if os.path.isfile(f"{self.outpath}.szv"):
-                os.remove(self.outpath)
-                os.remove(f"{self.outpath}.sza")
-                os.rename(f"{self.outpath}.szv", self.outpath)

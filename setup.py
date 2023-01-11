@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="Sanzan",
-    version="2.0.1",
+    version="2.0.2",
     packages=["sanzan"],
     description="Video encryption while maintaining playability.",
     long_description=long_description,

@@ -72,7 +72,7 @@ class Sanzan:
 
         f.run(quiet=True, overwrite_output=True)
 
-    def _crypt(self, crypt_mode, output, scramble, preview, per_frame, quiet, padding, audio_out_format, denoise):
+    def _crypt(self, crypt_mode, output, scramble, preview, per_frame, quiet, padding, audio_out_format, denoise, light):
         procs = []
 
         if self.audio:
@@ -88,6 +88,7 @@ class Sanzan:
                         audio_out_format,
                         denoise,
                         preview,
+                        light,
                     ),
                 )
             )
@@ -106,8 +107,8 @@ class Sanzan:
             os.remove(output_video)
             os.remove(output_audio)
 
-    def encrypt(self, output=None, scramble=DEFAULT_SCRAMBLE, preview=False, per_frame=False, quiet=False, padding=True, audio_out_format=DEFAULT_AUDIO_FORMAT, denoise=False):
-        self._crypt(0, output, scramble, preview, per_frame, quiet, padding, audio_out_format, denoise)
+    def encrypt(self, output=None, scramble=DEFAULT_SCRAMBLE, preview=False, per_frame=False, quiet=False, padding=True, audio_out_format=DEFAULT_AUDIO_FORMAT, denoise=False, light=False):
+        self._crypt(0, output, scramble, preview, per_frame, quiet, padding, audio_out_format, denoise, light)
 
-    def decrypt(self, output=None, scramble=DEFAULT_SCRAMBLE, preview=False, per_frame=False, quiet=False, padding=True, audio_out_format=DEFAULT_AUDIO_FORMAT, denoise=True):
-        self._crypt(1, output, scramble, preview, per_frame, quiet, padding, audio_out_format, denoise)
+    def decrypt(self, output=None, scramble=DEFAULT_SCRAMBLE, preview=False, per_frame=False, quiet=False, padding=True, audio_out_format=DEFAULT_AUDIO_FORMAT, denoise=True, light=False):
+        self._crypt(1, output, scramble, preview, per_frame, quiet, padding, audio_out_format, denoise, light)

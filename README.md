@@ -66,6 +66,8 @@ Use the `-q` flag for quiet mode.
 
 Use the `-a` argument to specify output audio format: `mp3`, `wav` (default), `flac`, etc.
 
+Use the `-l` flag to use light encryption/decryption.
+
 Use the `-dn` flag to apply denoising to the output audio.
 
 Use the `-pp` flag to disable audio padding.

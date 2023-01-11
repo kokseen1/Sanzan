@@ -22,6 +22,7 @@ def main(args=None):
     parser.add_argument("-a", "--audio_format", type=str, default=DEFAULT_AUDIO_FORMAT)
     parser.add_argument("-s", "--scramble", type=str, default=DEFAULT_SCRAMBLE)
 
+    parser.add_argument("-l", "--light", action="store_true")
     parser.add_argument("-dn", "--denoise", action="store_true")
     parser.add_argument("-f", "--per_frame", action="store_true")
     parser.add_argument("-p", "--preview", action="store_true")
@@ -35,9 +36,9 @@ def main(args=None):
     if args.key:
         s.set_password(args.key)
     if args.encrypt:
-        s.encrypt(args.output, args.scramble, args.preview, args.per_frame, args.quiet, args.padding, args.audio_format, args.denoise)
+        s.encrypt(args.output, args.scramble, args.preview, args.per_frame, args.quiet, args.padding, args.audio_format, args.denoise, args.light)
     elif args.decrypt:
-        s.decrypt(args.output, args.scramble, args.preview, args.per_frame, args.quiet, args.padding, args.audio_format, args.denoise)
+        s.decrypt(args.output, args.scramble, args.preview, args.per_frame, args.quiet, args.padding, args.audio_format, args.denoise, args.light)
 
 
 if __name__ == "__main__":

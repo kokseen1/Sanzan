@@ -1,47 +1,43 @@
-from sanzan import *
 import argparse
+
+from .audio import DEFAULT_AUDIO_FORMAT
+from .video import DEFAULT_SCRAMBLE
+from .sanzan import Sanzan, DEFAULT_MODE
 
 
 def main(args=None):
-    parser = argparse.ArgumentParser(description="Encrypt or decrypt video files")
+    parser = argparse.ArgumentParser(description="Sanzan")
 
-    ifile_group = parser.add_mutually_exclusive_group(required=True)
-    ifile_group.add_argument("-e", "--encrypt", help="path of file to encrypt", type=str)
-    ifile_group.add_argument("-d", "--decrypt", help="path of file to decrypt", type=str)
+    parser.add_argument("input", type=str)
 
-    parser.add_argument("-kv", "--videokey", help="path of video keyfile", type=str)
-    parser.add_argument("-ka", "--audiokey", help="path of audio keyfile", type=str)
-    parser.add_argument("-o", "--output", help="path of output file", type=str)
-    parser.add_argument("-pw", "--password", help="password to encrypt or decrypt", type=str)
-    parser.add_argument("-c", "--chunksize", help="audio chunksize", type=int)
+    modes = parser.add_mutually_exclusive_group(required=True)
 
-    parser.add_argument("-p", "--preview", action="store_true", help="show real time preview of output")
-    parser.add_argument("-s", "--silent", action="store_true", help="hide progress bar")
-    parser.add_argument("-ex", "--export", action="store_true", help="export keyfiles")
-    parser.add_argument("-na", "--noaudio", action="store_true", help="remove audio track")
+    modes.add_argument("-e", "--encrypt", action="store_true")
+    modes.add_argument("-d", "--decrypt", action="store_true")
 
-    args = parser.parse_args(args)
+    parser.add_argument("-k", "--key", type=str)
+    parser.add_argument("-o", "--output", type=str)
 
-    if not (args.output or args.preview):
-        parser.error("no action specified, add -o or -p")
+    parser.add_argument("-m", "--mode", type=str, default=DEFAULT_MODE)
+    parser.add_argument("-a", "--audio_format", type=str, default=DEFAULT_AUDIO_FORMAT)
+    parser.add_argument("-s", "--scramble", type=str, default=DEFAULT_SCRAMBLE)
 
+    parser.add_argument("-dn", "--denoise", action="store_true")
+    parser.add_argument("-f", "--per_frame", action="store_true")
+    parser.add_argument("-p", "--preview", action="store_true")
+    parser.add_argument("-q", "--quiet", action="store_true")
+
+    parser.add_argument("-pp", "--padding", action="store_false", help="Disable audio padding")
+
+    args = parser.parse_args()
+
+    s = Sanzan(args.input, args.mode)
+    if args.key:
+        s.set_password(args.key)
     if args.encrypt:
-        x = Encryptor(args.encrypt, noaudio=args.noaudio)
-        x.gen_key(args.videokey, args.password, args.export)
-        x.gen_audio_key(args.password, args.chunksize, args.export)
-
-    if args.decrypt:
-        if not (args.videokey or args.password):
-            parser.error("keyfile or password not specified, add -kv or -pw")
-
-        x = Decryptor(args.decrypt, noaudio=args.noaudio)
-        x.set_key(args.videokey, args.password)
-        x.set_audio_key(args.audiokey, args.password, args.chunksize)
-
-    if args.output:
-        x.set_output(args.output)
-
-    x.run(preview=args.preview, silent=args.silent)
+        s.encrypt(args.output, args.scramble, args.preview, args.per_frame, args.quiet, args.padding, args.audio_format, args.denoise)
+    elif args.decrypt:
+        s.decrypt(args.output, args.scramble, args.preview, args.per_frame, args.quiet, args.padding, args.audio_format, args.denoise)
 
 
 if __name__ == "__main__":

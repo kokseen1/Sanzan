@@ -1,0 +1,2 @@
+class SanzanException(Exception):
+    pass

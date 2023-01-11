@@ -31,44 +31,51 @@ pip install sanzan
 ### Encryption
 
 ```shell
-sz -e original.mp4 -o encrypted.mp4 -pw <password>
+sz original.mp4 -k <key> -e -o encrypted.mp4 
 ```
 
 #### On a stream
 
 ```shell
-sz -e https://youtu.be/dQw4w9WgXcQ -o encrypted.mp4 -pw <password>
+sz https://youtu.be/dQw4w9WgXcQ -k <key> -e -o encrypted.mp4 
 ```
 
 ### Decryption
 
+```shell
+sz encrypted.mp4 -k <key> -d -o decrypted.mp4 
+```
+
 #### With preview
 
 ```shell
-sz -d encrypted.mp4 -o decrypted.mp4 -pw <password> -p
+sz encrypted.mp4 -k <key> -d -o decrypted.mp4 -p
 ```
 
-#### With keyfiles
-
-Use the `-kv` and `-ka` flags to specify keyfiles when decrypting.
-
-```shell
-sz -d encrypted.mp4 -o decrypted.mp4 -kv key.szvk -ka key.szak
-```
+- Frames will be displayed as quickly as they are generated.
+- Audio will only start playing after the whole stream has been processed.
 
 ### More Usage
 
-Omit the `-pw` flag to encrypt using randomly generated keyfiles.
+Omit the `-k` argument to encrypt using randomly generated keyfiles.
 
-```shell
-sz -e original.mp4 -o encrypted.mp4
-```
+Use the `-m` argument to specify mode: `audio`, `video` or `full` (default).
 
-Use the `-s` flag to hide progress bars. This might slightly improve performance.
+Use the `-q` flag for quiet mode.
 
-Use the `-c` flag to specify the audio chunksize. The default is `100`.
+#### Audio options
 
-Use the `-ex` flag to export the keyfiles generated using a password.
+Use the `-a` argument to specify output audio format: `mp3`, `wav` (default), `flac`, etc.
+
+Use the `-dn` flag to apply denoising to the output audio.
+
+Use the `-pp` flag to disable audio padding.
+
+#### Video options
+
+Use the `-s` argument to specify scramble method: `rows` (default), `cols`, `full`.
+
+Use the `-f` flag to generate a different scramble order every frame.
 
 ### Python Usage
 
@@ -77,36 +84,21 @@ Alternatively, Sanzan provides a Python interface to programmatically access its
 #### Encryption
 
 ```python
-from sanzan import Encryptor
-
-PW = "p@ssw0rd"
+from sanzan import Sanzan
 
 if __name__ == "__main__":
-    e = Encryptor("original.mp4")
-    e.gen_key(password=PW)
-    e.gen_audio_key(password=PW)
-    e.set_output("encrypted.mp4")
-    e.run()
+    s = Sanzan("original.mp4")
+    s.set_password("1234")
+    s.encrypt("encrypted.mp4")
 ```
 
 #### Decryption
 
 ```python
-from sanzan import Decryptor
-
-PW = "p@ssw0rd"
+from sanzan import Sanzan
 
 if __name__ == "__main__":
-    d = Decryptor("encrypted.mp4")
-    d.set_key(password=PW)
-    d.set_audio_key(password=PW)
-    d.set_output("decrypted.mp4")
-    d.run(preview=True)
+    s = Sanzan("encrypted.mp4")
+    s.set_password("1234")
+    s.decrypt("decrypted.mp4", preview=True, denoise=True)
 ```
-
-## Note
-
-- Audio is not supported for streams.
-- Previewing audio is not supported.
-- Because `cv2.waitKey` is unable to maintain a consistent playback framerate for `cv2.imshow`, preview mode will display frames as quickly as they are generated.
-- Container formats like MKV will not decrypt reliably and must be converted to mp4 before encrypting. See [this issue](https://github.com/kokseen1/Sanzan/issues/11#issue-1268649172).

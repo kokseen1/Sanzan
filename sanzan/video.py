@@ -12,10 +12,7 @@ DEFAULT_SCRAMBLE = "rows"
 
 @njit
 def _shuffle_rows(frame, order_x):
-    for i in range(len(frame)):
-        frame[i] = frame[i][order_x]
-
-    return frame
+    return frame[:, order_x]
 
 
 def get_cap_properties(cap):

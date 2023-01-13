@@ -100,24 +100,41 @@ class Audio:
         target_shape = self.array.shape
 
         if padding:
+            # Pad up to the next second
             padded_dur = floor(self.audio.duration_seconds) + 1
+
             # Round up to nearest sample rate multiple to get length of padded array
             padded_length = padded_dur * self.audio.frame_rate
             print(f"\n[audio] Padding to {padded_length} samples ({padded_dur}s)")
+
+            # Account for 1-d array (mono channel)
             target_shape = (padded_length, self.audio.channels) if self.audio.channels > 1 else padded_length
-            target_array = np.resize(self.array, target_shape)
+            target_array = np.resize(target_array, target_shape)
 
         if light:
+            # target_array = np.flip(target_array, 0)
+            # Group samples into subarrays for less granular shuffling
+            chunk_size = self.audio.frame_rate/50
             dim_3 = (self.audio.channels,) if self.audio.channels > 1 else ()
-            target_array = np.reshape(target_array, (self.audio.frame_rate,-1,) + dim_3)
+            target_array = np.reshape(target_array, (-1,int(chunk_size),) + dim_3)
 
         shuf_order = self.keygen.generate_key(len(target_array), True)
-        shuffled_array = target_array[shuf_order]
+        target_array = target_array[shuf_order]
 
         if light:
-            shuffled_array = np.reshape(shuffled_array, target_shape)
+            # Flatten
+            target_array = np.reshape(target_array, target_shape)
+        
+        if padding:
+            # Pad another half a frame to ensure reliable rounding down
+            padded_length = len(target_array) + floor(self.audio.frame_rate/2)
+            print(f"\n[audio] Further padding to {padded_length} samples ({padded_length/self.audio.frame_rate}s)")
 
-        self._write(output, self.audio.frame_rate, self.audio.sample_width, shuffled_array, out_format, denoise, preview)
+            target_shape = (padded_length, self.audio.channels) if self.audio.channels > 1 else padded_length
+            target_array = np.resize(target_array, target_shape)
+
+
+        self._write(output, self.audio.frame_rate, self.audio.sample_width, target_array, out_format, denoise, preview)
 
     def decrypt(self, output, padding=True, out_format=DEFAULT_AUDIO_FORMAT, denoise=True, preview=False, light=False):
         """
@@ -142,13 +159,15 @@ class Audio:
             target_array = np.resize(self.array, target_shape)
 
         if light:
+            chunk_size = self.audio.frame_rate/50
             dim_3 = (self.audio.channels,) if self.audio.channels > 1 else ()
-            target_array = np.reshape(target_array, (self.audio.frame_rate,-1,) + dim_3)
+            target_array = np.reshape(target_array, (-1,int(chunk_size),) + dim_3)
 
         unshuf_order = self.keygen.generate_rev_key(len(target_array), True)
-        unshuffled_array = target_array[unshuf_order]
+        target_array = target_array[unshuf_order]
 
         if light:
-            unshuffled_array = np.reshape(unshuffled_array, target_shape)
+            target_array = np.reshape(target_array, target_shape)
+            # target_array = np.flip(target_array, 0)
 
-        self._write(output, self.audio.frame_rate, self.audio.sample_width, unshuffled_array, out_format, denoise, preview)
+        self._write(output, self.audio.frame_rate, self.audio.sample_width, target_array, out_format, denoise, preview)

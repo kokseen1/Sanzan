@@ -114,7 +114,7 @@ class Audio:
         if light:
             # target_array = np.flip(target_array, 0)
             # Group samples into subarrays for less granular shuffling
-            chunk_size = self.audio.frame_rate/50
+            chunk_size = self.audio.frame_rate/10
             dim_3 = (self.audio.channels,) if self.audio.channels > 1 else ()
             target_array = np.reshape(target_array, (-1,int(chunk_size),) + dim_3)
 
@@ -156,10 +156,10 @@ class Audio:
             padded_length = padded_dur * self.audio.frame_rate
             print(f"\n[audio] Rounding down to {padded_length} samples ({padded_dur}s)")
             target_shape = (padded_length, self.audio.channels) if self.audio.channels > 1 else padded_length
-            target_array = np.resize(self.array, target_shape)
+            target_array = np.resize(target_array, target_shape)
 
         if light:
-            chunk_size = self.audio.frame_rate/50
+            chunk_size = self.audio.frame_rate/10
             dim_3 = (self.audio.channels,) if self.audio.channels > 1 else ()
             target_array = np.reshape(target_array, (-1,int(chunk_size),) + dim_3)
 
